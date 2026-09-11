@@ -1,9 +1,11 @@
+import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useClienteStore } from "../context/ClienteContext"
 
 export default function Titulo() {
     const { cliente, deslogaCliente } = useClienteStore()
     const navigate = useNavigate()
+    const [menuAberto, setMenuAberto] = useState(false)
 
     function clienteSair() {
         if (confirm("Confirma saída do sistema?")) {
@@ -16,44 +18,58 @@ export default function Titulo() {
     }
 
     return (
-        <nav className="border-emerald-600 bg-emerald-700 dark:bg-emerald-900 dark:border-emerald-800">
-            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-                    <img src="/logo-mark.svg" className="h-10" alt="Logo ReLivro" />
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
+        <nav className="bg-emerald-800 dark:bg-emerald-950 shadow-md sticky top-0 z-50">
+            <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 py-3">
+                <Link to="/" className="flex items-center gap-2">
+                    <img src="/logo-mark.svg" className="h-9" alt="Logo ReLivro" />
+                    <span className="text-2xl font-bold tracking-tight text-white">
                         ReLivro
                     </span>
                 </Link>
 
-                <button data-collapse-toggle="navbar-solid-bg" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-white rounded-lg md:hidden hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-400" aria-controls="navbar-solid-bg" aria-expanded="false">
+                <button
+                    onClick={() => setMenuAberto((aberto) => !aberto)}
+                    type="button"
+                    className="inline-flex items-center p-2 w-10 h-10 justify-center text-white rounded-lg md:hidden hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-couro"
+                >
                     <span className="sr-only">Abrir menu</span>
                     <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15" />
                     </svg>
                 </button>
 
-                <div className="hidden w-full md:block md:w-auto" id="navbar-solid-bg">
-                    <ul className="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 md:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent">
-                        <li>
-                            {cliente.id ? (
-                                <>
-                                    <span className="text-white">{cliente.nome}</span>
-                                    &nbsp;&nbsp;
-                                    <Link to="/minhas-compras" className="text-emerald-900 font-bold bg-white hover:bg-gray-100 focus:ring-2 focus:outline-none focus:ring-emerald-300 rounded-lg text-sm w-full sm:w-auto px-3 py-2 text-center">
-                                        Minhas Compras
-                                    </Link>
-                                    &nbsp;&nbsp;
-                                    <span className="cursor-pointer font-bold text-white" onClick={clienteSair}>
-                                        Sair
-                                    </span>
-                                </>
-                            ) : (
-                                <Link to="/login" className="block py-2 px-3 md:p-0 text-white rounded-sm hover:underline md:border-0">
-                                    Identifique-se
-                                </Link>
-                            )}
-                        </li>
-                    </ul>
+                <div className={`${menuAberto ? "block" : "hidden"} w-full md:flex md:w-auto md:items-center mt-4 md:mt-0`}>
+                    {cliente.id ? (
+                        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+                            <div className="flex items-center gap-2 text-white">
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-couro font-semibold text-sm text-white">
+                                    {cliente.nome.charAt(0).toUpperCase()}
+                                </span>
+                                <span className="font-medium">{cliente.nome}</span>
+                            </div>
+
+                            <Link
+                                to="/minhas-compras"
+                                className="text-white font-semibold bg-couro hover:bg-couro-escuro focus:ring-2 focus:outline-none focus:ring-couro-escuro rounded-lg text-sm px-4 py-2 text-center transition-colors"
+                            >
+                                Minhas Compras
+                            </Link>
+
+                            <button
+                                onClick={clienteSair}
+                                className="text-white/90 font-medium text-sm hover:text-white hover:underline transition-colors text-left"
+                            >
+                                Sair
+                            </button>
+                        </div>
+                    ) : (
+                        <Link
+                            to="/login"
+                            className="inline-block bg-couro text-white font-semibold text-sm rounded-lg px-4 py-2 hover:bg-couro-escuro transition-colors"
+                        >
+                            Identifique-se
+                        </Link>
+                    )}
                 </div>
             </div>
         </nav>
