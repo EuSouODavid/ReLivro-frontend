@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+    --color-couro: #6f4e37;
+    --color-couro-escuro: #4a3222;
+    --color-couro-profundo: #2e1d10;
+}
+
 body {
     margin: 0;
 }
