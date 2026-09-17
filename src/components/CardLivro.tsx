@@ -18,15 +18,12 @@ export function CardLivro({ data }: { data: LivroType }) {
                 <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
                     {data.autor}
                 </p>
-                <p className="mb-3 font-extrabold text-gray-700 dark:text-gray-300">
-                    Preço R$: {Number(data.preco).toLocaleString("pt-br", { minimumFractionDigits: 2 })}
-                </p>
                 <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                     {data.categoria} - {data.ano}
                 </p>
                 <Link
                     to={`/detalhes/${data.id}`}
-                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300"
+                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-couro rounded-lg hover:bg-couro-escuro focus:ring-4 focus:outline-none focus:ring-couro-escuro transition-colors"
                 >
                     Ver Detalhes
                     <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
