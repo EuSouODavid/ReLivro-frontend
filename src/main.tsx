@@ -7,17 +7,17 @@ import Login from './Login.tsx'
 import CadCliente from './CadCliente.tsx'
 import Detalhes from './Detalhes.tsx'
 import MinhasCompras from './MinhasCompras.tsx'
+
+import Layout from './Layout.tsx'
 import AdminLayout from './admin/AdminLayout.tsx'
 import AdminDashboard from './admin/AdminDashboard.tsx'
 import AdminVendas from './admin/AdminVendas.tsx'
 import AdminPropostas from './admin/AdminPropostas.tsx'
-
-import Layout from './Layout.tsx'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 // Rotas do lado do cliente + a área do admin (item 8 em diante), com sua
-// própria árvore de rotas e layout. Login do admin e o CRUD de livros /
-// compras (itens 9-11) entram junto de 'dashboard' na Parte 5.
+// própria árvore de rotas e layout. Login do admin entra na Parte 5;
+// editar/cancelar proposta pelo cliente (MinhasCompras) é outra feature.
 const rotas = createBrowserRouter([
   {
     path: '/',
@@ -36,6 +36,8 @@ const rotas = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: 'dashboard', element: <AdminDashboard /> },
+      { path: 'vendas', element: <AdminVendas /> },
+      { path: 'propostas', element: <AdminPropostas /> },
     ],
   },
 ])
