@@ -9,6 +9,8 @@ import Detalhes from './Detalhes.tsx'
 import MinhasCompras from './MinhasCompras.tsx'
 import AdminLayout from './admin/AdminLayout.tsx'
 import AdminDashboard from './admin/AdminDashboard.tsx'
+import AdminVendas from './admin/AdminVendas.tsx'
+import AdminPropostas from './admin/AdminPropostas.tsx'
 
 import Layout from './Layout.tsx'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'

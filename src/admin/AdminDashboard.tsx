@@ -24,7 +24,7 @@ export default function AdminDashboard() {
     }, [])
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div>
             <h1 className="mb-6 text-3xl font-extrabold text-gray-900 dark:text-white">
                 Dashboard
             </h1>
