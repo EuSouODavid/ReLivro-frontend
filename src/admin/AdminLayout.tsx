@@ -8,6 +8,7 @@ const ITENS_MENU = [
     { rota: 'dashboard', label: 'Dashboard' },
     { rota: 'vendas', label: 'Vendas' },
     { rota: 'propostas', label: 'Propostas' },
+    { rota: 'avaliacoes', label: 'Avaliações' },
 ]
 
 export default function AdminLayout() {

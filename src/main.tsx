@@ -13,6 +13,7 @@ import AdminLayout from './admin/AdminLayout.tsx'
 import AdminDashboard from './admin/AdminDashboard.tsx'
 import AdminVendas from './admin/AdminVendas.tsx'
 import AdminPropostas from './admin/AdminPropostas.tsx'
+import AdminAvaliacoes from './admin/AdminAvaliacoes'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 // Rotas do lado do cliente + a área do admin (item 8 em diante), com sua
@@ -38,6 +39,7 @@ const rotas = createBrowserRouter([
       { path: 'dashboard', element: <AdminDashboard /> },
       { path: 'vendas', element: <AdminVendas /> },
       { path: 'propostas', element: <AdminPropostas /> },
+      { path: 'avaliacoes', element: <AdminAvaliacoes /> },
     ],
   },
 ])
