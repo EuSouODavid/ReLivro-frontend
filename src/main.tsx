@@ -11,6 +11,7 @@ import MinhasCompras from './MinhasCompras.tsx'
 import Layout from './Layout.tsx'
 import AdminLayout from './admin/AdminLayout.tsx'
 import AdminDashboard from './admin/AdminDashboard.tsx'
+import AdminLivros from './admin/AdminLivros'
 import AdminVendas from './admin/AdminVendas.tsx'
 import AdminPropostas from './admin/AdminPropostas.tsx'
 import AdminAvaliacoes from './admin/AdminAvaliacoes'
@@ -47,6 +48,7 @@ const rotas = createBrowserRouter([
       },
       { path: 'login', element: <AdminLogin /> },
       { path: 'dashboard', element: <AdminDashboard /> },
+      { path: 'livros', element: <AdminLivros /> },
       { path: 'vendas', element: <AdminVendas /> },
       { path: 'propostas', element: <AdminPropostas /> },
       { path: 'avaliacoes', element: <AdminAvaliacoes /> },
