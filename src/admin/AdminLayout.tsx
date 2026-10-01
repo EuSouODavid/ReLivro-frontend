@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 // Árvore de rotas própria do admin (itens 8 em diante do trabalho).
 // Login do admin entra aqui na Parte 5 — por enquanto o menu já cobre as
@@ -8,9 +9,53 @@ const ITENS_MENU = [
     { rota: 'dashboard', label: 'Dashboard' },
     { rota: 'vendas', label: 'Vendas' },
     { rota: 'propostas', label: 'Propostas' },
+    { rota: 'avaliacoes', label: 'Avaliações' },
 ]
 
 export default function AdminLayout() {
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const adminLogado = Boolean(localStorage.getItem('adminToken') || localStorage.getItem('adminKey'))
+    const estaNaLogin = location.pathname === '/admin/login'
+
+    useEffect(() => {
+        if (!adminLogado && !estaNaLogin) {
+            navigate('/admin/login', { replace: true })
+        }
+    }, [adminLogado, estaNaLogin, navigate])
+
+    if (!adminLogado && estaNaLogin) {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <header className="bg-emerald-800 dark:bg-emerald-950 shadow-md">
+                    <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <span className="text-xl font-bold tracking-tight text-white">
+                                ReLivro
+                            </span>
+                            <span className="bg-couro text-white text-xs font-semibold uppercase tracking-wide rounded-full px-2.5 py-1">
+                                Admin
+                            </span>
+                        </div>
+
+                        <Link to="/" className="text-sm text-white/80 hover:text-white hover:underline">
+                            Voltar à loja
+                        </Link>
+                    </div>
+                </header>
+
+                <main className="max-w-7xl mx-auto px-4 py-6">
+                    <Outlet />
+                </main>
+            </div>
+        )
+    }
+
+    if (!adminLogado && !estaNaLogin) {
+        return null
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
             <header className="bg-emerald-800 dark:bg-emerald-950 shadow-md">
@@ -23,9 +68,23 @@ export default function AdminLayout() {
                             Admin
                         </span>
                     </Link>
-                    <Link to="/" className="text-sm text-white/80 hover:text-white hover:underline">
-                        Voltar à loja
-                    </Link>
+
+                    <div className="flex items-center gap-3">
+                        <Link to="/" className="text-sm text-white/80 hover:text-white hover:underline">
+                            Voltar à loja
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                localStorage.removeItem('adminToken')
+                                localStorage.removeItem('adminKey')
+                                navigate('/admin/login', { replace: true })
+                            }}
+                            className="text-sm font-medium text-white/90 hover:text-white"
+                        >
+                            Sair
+                        </button>
+                    </div>
                 </div>
             </header>
 

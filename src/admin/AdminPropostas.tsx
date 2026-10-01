@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import type { CompraType } from '../utils/CompraType'
+import { adminFetch } from './adminApi'
 
 // Tela "Propostas" (admin): lista as propostas Pendentes (GET
 // /compras?status=Pendente) e permite aceitar ou recusar (com
 // justificativa opcional) via PUT /compras/:id.
 export default function AdminPropostas() {
     const [propostas, setPropostas] = useState<CompraType[]>([])
+    const [termoBusca, setTermoBusca] = useState('')
     const [carregando, setCarregando] = useState(true)
     const [erro, setErro] = useState(false)
     const [recusandoId, setRecusandoId] = useState<number | null>(null)
@@ -16,7 +18,7 @@ export default function AdminPropostas() {
     function buscaPropostas() {
         setCarregando(true)
         setErro(false)
-        fetch(`${import.meta.env.VITE_API_URL}/compras?status=Pendente`)
+        adminFetch(`${import.meta.env.VITE_API_URL}/compras?status=Pendente`)
             .then((resposta) => {
                 if (!resposta.ok) throw new Error('Falha ao buscar propostas')
                 return resposta.json()
@@ -33,7 +35,7 @@ export default function AdminPropostas() {
     async function responder(id: number, status: 'Aceita' | 'Recusada', resposta?: string) {
         setEnviandoId(id)
         try {
-            const req = await fetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
+            const req = await adminFetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status, resposta: resposta?.trim() || undefined }),
@@ -57,11 +59,32 @@ export default function AdminPropostas() {
         }
     }
 
+    const propostasFiltradas = propostas.filter((proposta) => {
+        const textoBusca = termoBusca.trim().toLowerCase()
+
+        if (!textoBusca) return true
+
+        return (
+            proposta.livro?.titulo?.toLowerCase().includes(textoBusca) ||
+            proposta.cliente?.nome?.toLowerCase().includes(textoBusca)
+        )
+    })
+
     return (
         <div>
             <h1 className="mb-6 text-3xl font-extrabold text-gray-900 dark:text-white">
                 Propostas
             </h1>
+
+            <div className="mb-4">
+                <input
+                    type="text"
+                    value={termoBusca}
+                    onChange={(evento) => setTermoBusca(evento.target.value)}
+                    placeholder="Buscar livro ou cliente..."
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-0 placeholder:text-gray-400 focus:border-couro dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                />
+            </div>
 
             {carregando && <p className="text-gray-500 dark:text-gray-400">Carregando...</p>}
 
@@ -71,15 +94,15 @@ export default function AdminPropostas() {
                 </p>
             )}
 
-            {!carregando && !erro && propostas.length === 0 && (
+            {!carregando && !erro && propostasFiltradas.length === 0 && (
                 <p className="text-gray-500 dark:text-gray-400">
-                    Nenhuma proposta pendente no momento.
+                    {termoBusca ? 'Nenhuma proposta encontrada para a busca informada.' : 'Nenhuma proposta pendente no momento.'}
                 </p>
             )}
 
-            {!carregando && !erro && propostas.length > 0 && (
+            {!carregando && !erro && propostasFiltradas.length > 0 && (
                 <div className="flex flex-col gap-3">
-                    {propostas.map((proposta) => (
+                    {propostasFiltradas.map((proposta) => (
                         <div
                             key={proposta.id}
                             className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"

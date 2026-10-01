@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import type { CompraType } from '../utils/CompraType'
+import { adminFetch } from './adminApi'
 
 // Tela "Vendas" (admin): lista as propostas já Aceitas (GET
 // /compras?status=Aceita) e permite excluir o registro via DELETE
@@ -8,6 +9,7 @@ import type { CompraType } from '../utils/CompraType'
 // enquanto (a venda nasce do fluxo de proposta do cliente).
 export default function AdminVendas() {
     const [vendas, setVendas] = useState<CompraType[]>([])
+    const [termoBusca, setTermoBusca] = useState('')
     const [carregando, setCarregando] = useState(true)
     const [erro, setErro] = useState(false)
     const [excluindoId, setExcluindoId] = useState<number | null>(null)
@@ -15,7 +17,7 @@ export default function AdminVendas() {
     function buscaVendas() {
         setCarregando(true)
         setErro(false)
-        fetch(`${import.meta.env.VITE_API_URL}/compras?status=Aceita`)
+        adminFetch(`${import.meta.env.VITE_API_URL}/compras?status=Aceita`)
             .then((resposta) => {
                 if (!resposta.ok) throw new Error('Falha ao buscar vendas')
                 return resposta.json()
@@ -36,7 +38,7 @@ export default function AdminVendas() {
 
         setExcluindoId(id)
         try {
-            const resposta = await fetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
+            const resposta = await adminFetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
                 method: 'DELETE',
             })
 
@@ -54,11 +56,32 @@ export default function AdminVendas() {
         }
     }
 
+    const vendasFiltradas = vendas.filter((venda) => {
+        const textoBusca = termoBusca.trim().toLowerCase()
+
+        if (!textoBusca) return true
+
+        return (
+            venda.livro?.titulo?.toLowerCase().includes(textoBusca) ||
+            venda.cliente?.nome?.toLowerCase().includes(textoBusca)
+        )
+    })
+
     return (
         <div>
             <h1 className="mb-6 text-3xl font-extrabold text-gray-900 dark:text-white">
                 Vendas
             </h1>
+
+            <div className="mb-4">
+                <input
+                    type="text"
+                    value={termoBusca}
+                    onChange={(evento) => setTermoBusca(evento.target.value)}
+                    placeholder="Buscar livro ou cliente..."
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-0 placeholder:text-gray-400 focus:border-couro dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                />
+            </div>
 
             {carregando && <p className="text-gray-500 dark:text-gray-400">Carregando...</p>}
 
@@ -68,11 +91,13 @@ export default function AdminVendas() {
                 </p>
             )}
 
-            {!carregando && !erro && vendas.length === 0 && (
-                <p className="text-gray-500 dark:text-gray-400">Nenhuma venda registrada ainda.</p>
+            {!carregando && !erro && vendasFiltradas.length === 0 && (
+                <p className="text-gray-500 dark:text-gray-400">
+                    {termoBusca ? 'Nenhuma venda encontrada para a busca informada.' : 'Nenhuma venda registrada ainda.'}
+                </p>
             )}
 
-            {!carregando && !erro && vendas.length > 0 && (
+            {!carregando && !erro && vendasFiltradas.length > 0 && (
                 <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
                     <table className="w-full bg-white text-left text-sm dark:bg-gray-800">
                         <thead>
@@ -85,7 +110,7 @@ export default function AdminVendas() {
                             </tr>
                         </thead>
                         <tbody>
-                            {vendas.map((venda) => (
+                            {vendasFiltradas.map((venda) => (
                                 <tr
                                     key={venda.id}
                                     className="border-b border-gray-100 last:border-0 dark:border-gray-700"

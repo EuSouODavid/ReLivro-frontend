@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { DashboardType } from '../utils/DashboardType'
+import { adminFetch } from './adminApi'
 import { StatTile } from './components/StatTile'
 import { BarChartCard, CORES_GRAFICO } from './components/BarChartCard'
 import { StatusBreakdownCard } from './components/StatusBreakdownCard'
@@ -13,7 +14,7 @@ export default function AdminDashboard() {
     const [erro, setErro] = useState(false)
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/admin/dashboard`)
+        adminFetch(`${import.meta.env.VITE_API_URL}/admin/dashboard`)
             .then((resposta) => {
                 if (!resposta.ok) throw new Error('Falha ao buscar dashboard')
                 return resposta.json()
