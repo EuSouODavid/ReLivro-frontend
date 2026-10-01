@@ -14,6 +14,7 @@ const livroSchema = z.object({
     editora: z.string().trim().optional(),
     ano: z.string().trim().optional(),
     sinopse: z.string().trim().optional(),
+    fotos: z.string().trim().optional(),
 })
 
 type LivroForm = z.infer<typeof livroSchema>
@@ -38,6 +39,7 @@ type LivroApi = {
     editora: string
     ano: number
     sinopse: string[]
+    fotos?: Array<{ id: number; url: string; livroId: number }>
 }
 
 const valoresPadrao: LivroForm = {
@@ -48,6 +50,7 @@ const valoresPadrao: LivroForm = {
     editora: '',
     ano: '',
     sinopse: '',
+    fotos: '',
 }
 
 function converteLivroParaFormulario(livro: LivroApi): LivroForm {
@@ -59,6 +62,7 @@ function converteLivroParaFormulario(livro: LivroApi): LivroForm {
         editora: livro.editora ?? '',
         ano: livro.ano ? String(livro.ano) : '',
         sinopse: Array.isArray(livro.sinopse) ? livro.sinopse.join('\n') : '',
+        fotos: livro.fotos?.map((foto) => foto.url).join('\n') ?? '',
     }
 }
 
@@ -139,6 +143,13 @@ export default function AdminLivros() {
                   .filter(Boolean)
             : undefined
 
+        const fotos = dados.fotos
+            ? dados.fotos
+                  .split('\n')
+                  .map((item) => item.trim())
+                  .filter(Boolean)
+            : []
+
         const payload = {
             titulo: dados.titulo.trim(),
             autor: dados.autor.trim(),
@@ -148,6 +159,7 @@ export default function AdminLivros() {
             editora: dados.editora?.trim() || undefined,
             ano: dados.ano?.trim() ? Number(dados.ano) : undefined,
             sinopse: sinopse?.length ? sinopse : undefined,
+            fotos: fotos.length > 0 ? fotos : undefined,
         }
 
         try {
@@ -307,6 +319,21 @@ export default function AdminLivros() {
                                 className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-emerald-600 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Fotos (opcional)
+                        </label>
+                        <textarea
+                            rows={4}
+                            {...register('fotos')}
+                            placeholder="Cole uma URL de imagem por linha"
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-emerald-600 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+                        />
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            Insira uma URL por linha. Elas serão salvas como capas e imagens do livro.
+                        </p>
                     </div>
 
                     <div>

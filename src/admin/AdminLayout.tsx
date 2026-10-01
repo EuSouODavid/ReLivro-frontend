@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 // Árvore de rotas própria do admin (itens 8 em diante do trabalho).
@@ -13,18 +13,28 @@ const ITENS_MENU = [
     { rota: 'avaliacoes', label: 'Avaliações' },
 ]
 
+function temSessaoAdmin() {
+    const token = localStorage.getItem('adminToken')
+    const adminKey = localStorage.getItem('adminKey')
+
+    return Boolean(token && token.trim()) || Boolean(adminKey && adminKey.trim() && adminKey !== 'null')
+}
+
 export default function AdminLayout() {
     const navigate = useNavigate()
     const location = useLocation()
+    const [adminLogado, setAdminLogado] = useState(temSessaoAdmin())
 
-    const adminLogado = Boolean(localStorage.getItem('adminToken') || localStorage.getItem('adminKey'))
     const estaNaLogin = location.pathname === '/admin/login'
 
     useEffect(() => {
-        if (!adminLogado && !estaNaLogin) {
+        const autenticado = temSessaoAdmin()
+        setAdminLogado(autenticado)
+
+        if (!autenticado && !estaNaLogin) {
             navigate('/admin/login', { replace: true })
         }
-    }, [adminLogado, estaNaLogin, navigate])
+    }, [location.pathname, estaNaLogin, navigate])
 
     if (!adminLogado && estaNaLogin) {
         return (
