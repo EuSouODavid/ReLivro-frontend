@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import type { AvaliacaoType } from '../utils/AvaliacaoType'
 import type { LivroType } from '../utils/LivroType'
+import { adminFetch } from './adminApi'
 
 export default function AdminAvaliacoes() {
     const [avaliacoes, setAvaliacoes] = useState<AvaliacaoType[]>([])
@@ -13,7 +14,7 @@ export default function AdminAvaliacoes() {
     useEffect(() => {
         async function buscarAvaliacoes() {
             try {
-                const respostaLivros = await fetch(`${import.meta.env.VITE_API_URL}/livros`)
+                const respostaLivros = await adminFetch(`${import.meta.env.VITE_API_URL}/livros`)
 
                 if (!respostaLivros.ok) {
                     throw new Error('Falha ao buscar livros')
@@ -23,7 +24,7 @@ export default function AdminAvaliacoes() {
 
                 const listas = await Promise.all(
                     livros.map(async (livro) => {
-                        const respostaAvaliacoes = await fetch(`${import.meta.env.VITE_API_URL}/livros/${livro.id}/avaliacoes`)
+                        const respostaAvaliacoes = await adminFetch(`${import.meta.env.VITE_API_URL}/livros/${livro.id}/avaliacoes`)
 
                         if (!respostaAvaliacoes.ok) {
                             return []
@@ -61,7 +62,7 @@ export default function AdminAvaliacoes() {
         setRemovendoId(id)
 
         try {
-            const resposta = await fetch(`${import.meta.env.VITE_API_URL}/avaliacoes/${id}`, {
+            const resposta = await adminFetch(`${import.meta.env.VITE_API_URL}/avaliacoes/${id}`, {
                 method: 'DELETE',
             })
 

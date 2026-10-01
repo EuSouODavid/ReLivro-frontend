@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import type { CompraType } from '../utils/CompraType'
+import { adminFetch } from './adminApi'
 
 // Tela "Vendas" (admin): lista as propostas já Aceitas (GET
 // /compras?status=Aceita) e permite excluir o registro via DELETE
@@ -16,7 +17,7 @@ export default function AdminVendas() {
     function buscaVendas() {
         setCarregando(true)
         setErro(false)
-        fetch(`${import.meta.env.VITE_API_URL}/compras?status=Aceita`)
+        adminFetch(`${import.meta.env.VITE_API_URL}/compras?status=Aceita`)
             .then((resposta) => {
                 if (!resposta.ok) throw new Error('Falha ao buscar vendas')
                 return resposta.json()
@@ -37,7 +38,7 @@ export default function AdminVendas() {
 
         setExcluindoId(id)
         try {
-            const resposta = await fetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
+            const resposta = await adminFetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
                 method: 'DELETE',
             })
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import type { CompraType } from '../utils/CompraType'
+import { adminFetch } from './adminApi'
 
 // Tela "Propostas" (admin): lista as propostas Pendentes (GET
 // /compras?status=Pendente) e permite aceitar ou recusar (com
@@ -17,7 +18,7 @@ export default function AdminPropostas() {
     function buscaPropostas() {
         setCarregando(true)
         setErro(false)
-        fetch(`${import.meta.env.VITE_API_URL}/compras?status=Pendente`)
+        adminFetch(`${import.meta.env.VITE_API_URL}/compras?status=Pendente`)
             .then((resposta) => {
                 if (!resposta.ok) throw new Error('Falha ao buscar propostas')
                 return resposta.json()
@@ -34,7 +35,7 @@ export default function AdminPropostas() {
     async function responder(id: number, status: 'Aceita' | 'Recusada', resposta?: string) {
         setEnviandoId(id)
         try {
-            const req = await fetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
+            const req = await adminFetch(`${import.meta.env.VITE_API_URL}/compras/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status, resposta: resposta?.trim() || undefined }),
