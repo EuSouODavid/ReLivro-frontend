@@ -7,6 +7,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-do
 // feature; por ora só a tela "em construção" pra o link não cair em 404).
 const ITENS_MENU = [
     { rota: 'dashboard', label: 'Dashboard' },
+    { rota: 'livros', label: 'Livros' },
     { rota: 'vendas', label: 'Vendas' },
     { rota: 'propostas', label: 'Propostas' },
     { rota: 'avaliacoes', label: 'Avaliações' },
