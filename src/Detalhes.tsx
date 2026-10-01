@@ -27,6 +27,7 @@ export default function Detalhes() {
     const [comentarioAvaliacao, setComentarioAvaliacao] = useState('')
     const [enviandoAvaliacao, setEnviandoAvaliacao] = useState(false)
     const [excluindoAvaliacao, setExcluindoAvaliacao] = useState(false)
+    const [imagemAtiva, setImagemAtiva] = useState<string | null>(null)
 
     const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<PropostaForm>({
         resolver: zodResolver(propostaSchema),
@@ -34,9 +35,14 @@ export default function Detalhes() {
     })
 
     useEffect(() => {
+        setImagemAtiva(null)
+
         fetch(`${import.meta.env.VITE_API_URL}/livros/${livroId}`)
             .then((resposta) => resposta.json())
-            .then((dados) => setLivro(dados))
+            .then((dados) => {
+                setLivro(dados)
+                setImagemAtiva(Array.isArray(dados?.fotos) && dados.fotos.length > 0 ? dados.fotos[0].url : null)
+            })
             .finally(() => setCarregando(false))
 
         fetch(`${import.meta.env.VITE_API_URL}/livros/${livroId}/avaliacoes`)
@@ -187,16 +193,42 @@ export default function Detalhes() {
         return <p className="text-center text-gray-500 mt-16">Livro não encontrado.</p>
     }
 
-    const foto = livro.fotos?.[0]?.url
+    const fotos = livro.fotos ?? []
+    const imagemPrincipal = imagemAtiva ?? fotos[0]?.url ?? '/vite.svg'
 
     return (
         <div className="max-w-5xl mx-auto mt-8 px-4 pb-16">
             <div className="grid md:grid-cols-2 gap-8">
-                <img
-                    src={foto ?? "/vite.svg"}
-                    alt={`Capa do livro ${livro.titulo}`}
-                    className="rounded-lg w-full h-96 object-cover"
-                />
+                <div>
+                    <div className="flex items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-800">
+                        <img
+                            src={imagemPrincipal}
+                            alt={`Capa do livro ${livro.titulo}`}
+                        />
+                    </div>
+
+                    {fotos.length > 1 && (
+                        <div className="mt-4 grid grid-cols-4 gap-3">
+                            {fotos.map((foto, index) => (
+                                <button
+                                    key={foto.id ?? `${foto.url}-${index}`}
+                                    type="button"
+                                    onClick={() => {
+                                        setImagemAtiva(foto.url)
+                                    }}
+                                    className={`overflow-hidden rounded-lg border-2 ${imagemPrincipal === foto.url ? 'border-emerald-600' : 'border-transparent'}`}
+                                    aria-label={`Ver imagem ${index + 1} do livro`}
+                                >
+                                    <img
+                                        src={foto.url}
+                                        alt={`${livro.titulo} - imagem ${index + 1}`}
+                                        className="aspect-[3/4] w-full object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{livro.titulo}</h1>
